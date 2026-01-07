@@ -1,5 +1,5 @@
 import { loadBenchmarks } from './data-loader.js';
-import { renderSolverTime, renderSizeTrend, renderSuccessRate } from './charts.js';
+import { renderSolverTime, renderSizeTrend, renderSuccessRate, renderSuccessLegend } from './charts.js';
 
 let allData = [];
 const charts = {};
@@ -180,4 +180,7 @@ function refreshAllVisualisations() {
   charts.solver = renderSolverTime(ctx1, filteredData);
   charts.size = renderSizeTrend(ctx2, filteredData);
   charts.success = renderSuccessRate(ctx3, filteredData);
+  
+  // Générer la légende séparément (en dehors du canvas)
+  renderSuccessLegend(filteredData);
 }

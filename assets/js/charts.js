@@ -228,10 +228,9 @@ export function renderSizeTrend(ctx, data) {
   return destroyAndCreate('sizeTrend', ctx, config);
 }
 
-// 3. Pie chart : Répartition SAT/UNSAT/UNKNOWN avec légende custom
+// 3. Pie chart : Répartition SAT/UNSAT/UNKNOWN (graphique uniquement)
 export function renderSuccessRate(ctx, data) {
   if (data.length === 0) {
-    document.getElementById('success-legend').innerHTML = '<p class="text-muted text-sm">Aucune donnée</p>';
     return destroyAndCreate('successRate', ctx, {
       type: 'pie',
       data: { labels: [], datasets: [] },
@@ -239,15 +238,17 @@ export function renderSuccessRate(ctx, data) {
     });
   }
 
-  // Compter les statuts
+  // Compter les statuts originaux (SAT/UNSAT/UNKNOWN)
   const statusCounts = countByKey(data, item => item.status);
 
-  const labels = ['SAT', 'UNSAT', 'UNKNOWN'];
+  const labelsOriginal = ['SAT', 'UNSAT', 'UNKNOWN'];
+  const labelsTraduits = ['Satisfaisant', 'Insatisfaisant', 'Inconnu'];
   const values = [];
   const total = data.length;
 
-  for (let i = 0; i < labels.length; i++) {
-    const label = labels[i];
+  // Calculer les valeurs pour chaque statut
+  for (let i = 0; i < labelsOriginal.length; i++) {
+    const label = labelsOriginal[i];
     const count = statusCounts[label] || 0;
     values.push(count);
   }
@@ -257,7 +258,7 @@ export function renderSuccessRate(ctx, data) {
   const config = {
     type: 'pie',
     data: {
-      labels: labels,
+      labels: labelsTraduits,
       datasets: [{
         data: values,
         backgroundColor: colors,
@@ -268,7 +269,7 @@ export function renderSuccessRate(ctx, data) {
     options: {
       ...getBaseOptions(),
       plugins: {
-        legend: { display: false }, // On crée notre propre légende
+        legend: { display: false },
         tooltip: {
           callbacks: {
             label: function(context) {
@@ -282,26 +283,44 @@ export function renderSuccessRate(ctx, data) {
     }
   };
 
-  // Créer légende custom avec pourcentages
+  return destroyAndCreate('successRate', ctx, config);
+}
+
+// 4. Légende personnalisée pour le pie chart (séparée du graphique)
+export function renderSuccessLegend(data) {
   const legendContainer = document.getElementById('success-legend');
+
+  if (data.length === 0) {
+    legendContainer.innerHTML = '<p class="text-muted text-sm">Aucune donnée</p>';
+    return;
+  }
+
+  // Compter les statuts originaux (SAT/UNSAT/UNKNOWN)
+  const statusCounts = countByKey(data, item => item.status);
+
+  const labelsOriginal = ['SAT', 'UNSAT', 'UNKNOWN'];
+  const labelsTraduits = ['Satisfaisant', 'Insatisfaisant', 'Inconnu'];
+  const colors = ['#43A047', '#e53935', '#fb8c00'];
+  const total = data.length;
+
   let legendHTML = '';
 
-  for (let i = 0; i < labels.length; i++) {
-    const label = labels[i];
-    const value = values[i];
+  // Générer les bulles de légende
+  for (let i = 0; i < labelsOriginal.length; i++) {
+    const labelOriginal = labelsOriginal[i];
+    const labelTraduit = labelsTraduits[i];
+    const value = statusCounts[labelOriginal] || 0;
     const percent = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
     const color = colors[i];
 
     legendHTML += `
       <div class="legend-item">
         <div class="legend-color" style="background-color: ${color};"></div>
-        <span class="legend-label">${label}</span>
+        <span class="legend-label">${labelTraduit}</span>
         <span class="legend-percent">${value} (${percent}%)</span>
       </div>
     `;
   }
 
   legendContainer.innerHTML = legendHTML;
-
-  return destroyAndCreate('successRate', ctx, config);
 }
