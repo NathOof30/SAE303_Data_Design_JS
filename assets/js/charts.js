@@ -121,7 +121,7 @@ export function renderSolverTime(ctx, data) {
           callbacks: {
             label: function(context) {
               const value = context.parsed.y;
-              if (value >= 1000) {
+              if (value >= 10000) {
                 return 'Temps: ' + value.toFixed(0) + 's (timeout probable)';
               }
               return 'Temps: ' + value.toFixed(2) + 's';
