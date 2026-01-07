@@ -24,8 +24,19 @@ function normalizeRecord(rec) {
     benchmark: lower.family || 'unknown',
     solver: lower.name || 'unknown',
     time: Number(lower.time ?? 0),
-    status: lower.status || 'UNKNOWN',
+    status: traduceStatus(lower.status) || 'Inconnu',
     variables: Number(lower.nb_variables ?? 0),
     clauses: Number(lower.nb_clauses ?? 0),
   };
+}
+
+function traduceStatus(status) {
+  if (!status || typeof status !== 'string') return 'Inconnu';
+  const map = {
+    SAT: 'Satisfaisant',
+    UNSAT: 'Non satisfaisant',
+    UNKNOWN: 'Inconnu',
+  };
+  const key = status.toUpperCase().trim();
+  return map[key] || 'Inconnu';
 }
