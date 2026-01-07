@@ -1,0 +1,3 @@
+body { background-color: #f8f9fa; }
+.card canvas { width: 100% !important; }
+.navbar-main { border-bottom: 1px solid rgba(0,0,0,0.05); }

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Benchmarks Solveurs</title>
+  <link rel="stylesheet" href="./assets/css/material-dashboard.css" />
+  <link rel="stylesheet" href="./assets/css/custom.css" />
+</head>
+<body class="g-sidenav-show bg-gray-100">
+  <main class="main-content position-relative max-height-vh-100 h-100">
+    <nav class="navbar navbar-main navbar-expand-lg px-3">
+      <div class="d-flex align-items-center w-100">
+        <h5 class="mb-0">Visualisation des benchmarks</h5>
+        <div class="ms-auto d-flex align-items-center gap-2">
+          <label class="mb-0 text-sm">Benchmark</label>
+          <select id="benchmark-select" class="form-select form-select-sm" aria-label="Filtrer par benchmark"></select>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+      <div class="row">
+        <div class="col-lg-6 mb-4">
+          <div class="card h-100">
+            <div class="card-header pb-0">
+              <h6 class="mb-0">Temps de résolution par solveur</h6>
+              <p class="text-sm text-secondary mb-0">Bar chart – temps (s)</p>
+            </div>
+            <div class="card-body">
+              <canvas id="chart-solver-time" height="220"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+          <div class="card h-100">
+            <div class="card-header pb-0">
+              <h6 class="mb-0">Évolution du temps vs taille</h6>
+              <p class="text-sm text-secondary mb-0">Line chart – n_variables vs temps</p>
+            </div>
+            <div class="card-body">
+              <canvas id="chart-size-trend" height="220"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4 mb-4">
+          <div class="card h-100">
+            <div class="card-header pb-0">
+              <h6 class="mb-0">Taux de réussite</h6>
+              <p class="text-sm text-secondary mb-0">SAT / UNSAT / UNKNOWN</p>
+            </div>
+            <div class="card-body">
+              <canvas id="chart-success-rate" height="240"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-8 mb-4">
+          <div class="card h-100">
+            <div class="card-header pb-0">
+              <h6 class="mb-0">Notes</h6>
+              <p class="text-sm text-secondary mb-0">Interprétations & méthodo</p>
+            </div>
+            <div class="card-body">
+              <ul class="mb-0 text-sm">
+                <li>Comparer les solveurs sur un benchmark choisi.</li>
+                <li>Observer l’impact de la taille (variables/clauses) sur le temps.</li>
+                <li>Suivre la robustesse via SAT/UNSAT/UNKNOWN.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="./assets/js/plugins/chartjs.min.js"></script>
+  <script type="module" src="./assets/js/main.js"></script>
+</body>
+</html>
