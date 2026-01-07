@@ -6,7 +6,9 @@
 
 ## Composition d'équipe
 
-Mathéo Mollet, Nathanaël Leang, Nolwenn Louis
+- Mathéo Mollet
+- Nathanaël Leang
+- Nolwenn Louis
 
 ## Les problèmes rencontrés
 
