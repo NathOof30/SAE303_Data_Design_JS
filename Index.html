@@ -115,7 +115,7 @@
               <h6 class="mb-0">Répartition des résultats</h6>
               <p class="text-sm text-secondary mb-0">Satisfaisant / Insatisfaisant / Inconnu</p>
             </div>
-            <div class="card-body chart-container">
+            <div class="card-body" id="pie-chart-container">
               <canvas id="chart-success-rate"></canvas>
               <!-- Légende avec pourcentages -->
               <div id="success-legend" class="mt-3 d-flex flex-wrap gap-2 justify-content-center"></div>
@@ -130,7 +130,7 @@
             </div>
             <div class="card-body">
               <ul class="mb-0 text-sm">
-                <li><strong>Temps par solveur</strong> : Compare la rapidité moyenne. Un temps élevé (≥1000s) signale un timeout.</li>
+                <li><strong>Temps par solveur</strong> : Compare la rapidité moyenne. Un temps élevé (≥10000s) signale un timeout.</li>
                 <li><strong>Évolution vs taille</strong> : Courbe montante = performance dégrade avec la complexité.</li>
                 <li><strong>Statuts</strong> : <span class="badge bg-success">Satisfaisant</span> = solution trouvée, <span class="badge bg-danger">Insatisfaisant</span> = impossible, <span class="badge bg-warning">Inconnu</span> = timeout/échec.</li>
                 <li><strong>Filtrage</strong> : Sélectionnez un benchmark pour comparer les solveurs sur un problème précis.</li>

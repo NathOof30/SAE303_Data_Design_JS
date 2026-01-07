@@ -35,6 +35,24 @@ body {
     border-bottom: 0;
 }
 
+/* Container spécifique pour le pie chart - flux normal */
+#pie-chart-container {
+    padding: 1.5rem;
+}
+
+/* Canvas du pie chart - taille fixe, pas absolute */
+#chart-success-rate {
+    max-width: 300px;
+    max-height: 300px;
+    margin: 0 auto;
+    display: block;
+}
+
+/* Légende en dessous du pie chart */
+#success-legend {
+    margin-top: 20px;
+}
+
 /* Légende personnalisée pour le pie chart */
 .legend-item {
     display: inline-flex;
