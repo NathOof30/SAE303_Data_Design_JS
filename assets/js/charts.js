@@ -1,67 +1,307 @@
 const chartRefs = {};
 
-export function renderSolverTime(ctx, data) {
-  if (data.length === 0) return;
-  const labels = [...new Set(data.map(d => d.solver))];
-  const times = labels.map(s => average(data.filter(d => d.solver === s).map(d => d.time)));
-  return createOrUpdate('solverTime', ctx, {
-    type: 'bar',
-    data: { labels, datasets: [{ label: 'Temps (s)', data: times, backgroundColor: '#43A047' }] },
-    options: {
-      responsive: true,
-      plugins: { legend: { display: false } },
-      scales: { y: { beginAtZero: true, title: { display: true, text: 'Temps (s)' } } }
-    }
-  });
+// Fonction pour calculer la moyenne
+function calculateAverage(numbers) {
+  if (numbers.length === 0) return 0;
+  const sum = numbers.reduce((total, num) => total + num, 0);
+  const average = sum / numbers.length;
+  return average;
 }
 
-export function renderSizeTrend(ctx, data) {
-  if (data.length === 0) return;
-  const bySolver = groupBy(data, d => d.solver);
-  const datasets = Object.entries(bySolver).map(([solver, items]) => ({
-    label: solver,
-    data: items.sort((a, b) => a.variables - b.variables).map(d => ({ x: d.variables, y: d.time })),
-    fill: false,
-    borderColor: randomColor(solver),
-    tension: 0.3
-  }));
-  return createOrUpdate('sizeTrend', ctx, {
-    type: 'line',
-    data: { datasets },
+// Fonction pour grouper par clé
+function groupByKey(array, keyFunction) {
+  const grouped = {};
+  for (let i = 0; i < array.length; i++) {
+    const item = array[i];
+    const key = keyFunction(item);
+    if (!grouped[key]) {
+      grouped[key] = [];
+    }
+    grouped[key].push(item);
+  }
+  return grouped;
+}
+
+// Fonction pour compter par clé
+function countByKey(array, keyFunction) {
+  const counts = {};
+  for (let i = 0; i < array.length; i++) {
+    const item = array[i];
+    const key = keyFunction(item);
+    if (!counts[key]) {
+      counts[key] = 0;
+    }
+    counts[key] = counts[key] + 1;
+  }
+  return counts;
+}
+
+// Générer couleur cohérente par nom
+function generateColorFromName(name) {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const hue = Math.abs(hash) % 360;
+  const saturation = 65;
+  const lightness = 50;
+  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+}
+
+// Détruire et recréer un graphique
+function destroyAndCreate(chartKey, canvasContext, config) {
+  if (chartRefs[chartKey]) {
+    chartRefs[chartKey].destroy();
+  }
+  chartRefs[chartKey] = new Chart(canvasContext, config);
+  return chartRefs[chartKey];
+}
+
+// Options communes pour stabilité
+function getBaseOptions() {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: {
+      duration: 400
+    }
+  };
+}
+
+// 1. Bar chart : Temps par solveur
+export function renderSolverTime(ctx, data) {
+  if (data.length === 0) {
+    return destroyAndCreate('solverTime', ctx, {
+      type: 'bar',
+      data: { labels: [], datasets: [] },
+      options: getBaseOptions()
+    });
+  }
+
+  // Grouper par solveur
+  const bySolver = groupByKey(data, item => item.solver);
+  const solverNames = Object.keys(bySolver).sort();
+
+  // Calculer temps moyen par solveur
+  const averageTimes = [];
+  for (let i = 0; i < solverNames.length; i++) {
+    const solverName = solverNames[i];
+    const solverData = bySolver[solverName];
+    const times = solverData.map(item => item.time);
+    const avgTime = calculateAverage(times);
+    averageTimes.push(avgTime);
+  }
+
+  // Couleurs : vert pour meilleur, rouge pour pire
+  const colors = averageTimes.map(time => {
+    const minTime = Math.min(...averageTimes);
+    const maxTime = Math.max(...averageTimes);
+    if (time === minTime) return '#43A047'; // Vert
+    if (time === maxTime) return '#e53935'; // Rouge
+    return '#42A5F5'; // Bleu par défaut
+  });
+
+  const config = {
+    type: 'bar',
+    data: {
+      labels: solverNames,
+      datasets: [{
+        label: 'Temps moyen (s)',
+        data: averageTimes,
+        backgroundColor: colors,
+        borderWidth: 0,
+        borderRadius: 6
+      }]
+    },
     options: {
-      responsive: true,
-      plugins: { legend: { display: true } },
+      ...getBaseOptions(),
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const value = context.parsed.y;
+              if (value >= 1000) {
+                return 'Temps: ' + value.toFixed(0) + 's (timeout probable)';
+              }
+              return 'Temps: ' + value.toFixed(2) + 's';
+            }
+          }
+        }
+      },
       scales: {
-        x: { type: 'linear', title: { display: true, text: 'Variables' } },
-        y: { title: { display: true, text: 'Temps (s)' } }
+        y: {
+          beginAtZero: true,
+          title: { display: true, text: 'Temps (secondes)' },
+          grid: { color: 'rgba(0,0,0,0.05)' }
+        },
+        x: {
+          grid: { display: false }
+        }
       }
     }
-  });
+  };
+
+  return destroyAndCreate('solverTime', ctx, config);
 }
 
+// 2. Line chart : Évolution temps vs variables
+export function renderSizeTrend(ctx, data) {
+  if (data.length === 0) {
+    return destroyAndCreate('sizeTrend', ctx, {
+      type: 'line',
+      data: { datasets: [] },
+      options: getBaseOptions()
+    });
+  }
+
+  // Grouper par solveur
+  const bySolver = groupByKey(data, item => item.solver);
+  const solverNames = Object.keys(bySolver).sort();
+
+  // Créer dataset par solveur
+  const datasets = [];
+  for (let i = 0; i < solverNames.length; i++) {
+    const solverName = solverNames[i];
+    const solverData = bySolver[solverName];
+
+    // Trier par nombre de variables
+    const sortedData = solverData.sort((a, b) => a.variables - b.variables);
+
+    // Créer points {x: variables, y: time}
+    const points = sortedData.map(item => ({
+      x: item.variables,
+      y: item.time
+    }));
+
+    const color = generateColorFromName(solverName);
+
+    datasets.push({
+      label: solverName,
+      data: points,
+      fill: false,
+      borderColor: color,
+      backgroundColor: color,
+      borderWidth: 2,
+      tension: 0.3,
+      pointRadius: 3,
+      pointHoverRadius: 5
+    });
+  }
+
+  const config = {
+    type: 'line',
+    data: { datasets: datasets },
+    options: {
+      ...getBaseOptions(),
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top',
+          labels: { boxWidth: 12, padding: 10, font: { size: 11 } }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const solverName = context.dataset.label;
+              const vars = context.parsed.x;
+              const time = context.parsed.y;
+              return solverName + ': ' + time.toFixed(2) + 's (' + vars + ' vars)';
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          type: 'linear',
+          title: { display: true, text: 'Nombre de variables' },
+          grid: { color: 'rgba(0,0,0,0.05)' }
+        },
+        y: {
+          title: { display: true, text: 'Temps (s)' },
+          grid: { color: 'rgba(0,0,0,0.05)' }
+        }
+      }
+    }
+  };
+
+  return destroyAndCreate('sizeTrend', ctx, config);
+}
+
+// 3. Pie chart : Répartition SAT/UNSAT/UNKNOWN avec légende custom
 export function renderSuccessRate(ctx, data) {
-  if (data.length === 0) return;
-  const counts = countBy(data, d => d.status);
-  const labels = ['Satisfaisant', 'Insatisfaisant', 'Inconnu'];
-  const values = labels.map(l => counts[l] || 0);
-  return createOrUpdate('successRate', ctx, {
+  if (data.length === 0) {
+    document.getElementById('success-legend').innerHTML = '<p class="text-muted text-sm">Aucune donnée</p>';
+    return destroyAndCreate('successRate', ctx, {
+      type: 'pie',
+      data: { labels: [], datasets: [] },
+      options: getBaseOptions()
+    });
+  }
+
+  // Compter les statuts
+  const statusCounts = countByKey(data, item => item.status);
+
+  const labels = ['SAT', 'UNSAT', 'UNKNOWN'];
+  const values = [];
+  const total = data.length;
+
+  for (let i = 0; i < labels.length; i++) {
+    const label = labels[i];
+    const count = statusCounts[label] || 0;
+    values.push(count);
+  }
+
+  const colors = ['#43A047', '#e53935', '#fb8c00'];
+
+  const config = {
     type: 'pie',
-    data: { labels, datasets: [{ data: values, backgroundColor: ['#43A047', '#e53935', '#fb8c00'] }] },
-    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
-  });
-}
+    data: {
+      labels: labels,
+      datasets: [{
+        data: values,
+        backgroundColor: colors,
+        borderWidth: 2,
+        borderColor: '#fff'
+      }]
+    },
+    options: {
+      ...getBaseOptions(),
+      plugins: {
+        legend: { display: false }, // On crée notre propre légende
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const value = context.parsed;
+              const percent = ((value / total) * 100).toFixed(1);
+              return context.label + ': ' + value + ' (' + percent + '%)';
+            }
+          }
+        }
+      }
+    }
+  };
 
-function createOrUpdate(key, ctx, config) {
-  if (chartRefs[key]) chartRefs[key].destroy();
-  chartRefs[key] = new Chart(ctx, config);
-  return chartRefs[key];
-}
+  // Créer légende custom avec pourcentages
+  const legendContainer = document.getElementById('success-legend');
+  let legendHTML = '';
 
-function average(arr) { return arr.length ? arr.reduce((s, v) => s + v, 0) / arr.length : 0; }
-function groupBy(arr, fn) { return arr.reduce((acc, item) => { const k = fn(item); (acc[k] ||= []).push(item); return acc; }, {}); }
-function countBy(arr, fn) { return arr.reduce((acc, item) => { const k = fn(item); acc[k] = (acc[k] || 0) + 1; return acc; }, {}); }
-function randomColor(key) {
-  const hash = [...key].reduce((h, c) => h + c.charCodeAt(0), 0);
-  const hue = hash % 360;
-  return `hsl(${hue}, 65%, 50%)`;
+  for (let i = 0; i < labels.length; i++) {
+    const label = labels[i];
+    const value = values[i];
+    const percent = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
+    const color = colors[i];
+
+    legendHTML += `
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: ${color};"></div>
+        <span class="legend-label">${label}</span>
+        <span class="legend-percent">${value} (${percent}%)</span>
+      </div>
+    `;
+  }
+
+  legendContainer.innerHTML = legendHTML;
+
+  return destroyAndCreate('successRate', ctx, config);
 }

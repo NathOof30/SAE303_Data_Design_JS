@@ -1,3 +1,89 @@
-body { background-color: #f8f9fa; }
-.card canvas { width: 100% !important; }
-.navbar-main { border-bottom: 1px solid rgba(0,0,0,0.05); }
+body { 
+  background-color: #f8f9fa; 
+}
+
+/* Empêcher le resize des canvas lors du filtrage */
+.chart-container {
+  position: relative;
+  height: 300px; /* Hauteur fixe pour stabilité */
+  width: 100%;
+}
+
+.chart-container canvas {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Navbar harmonisé */
+.navbar-main { 
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Cards statistiques */
+.card {
+  border: 0;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+}
+
+.card-header {
+  border-bottom: 0;
+}
+
+/* Légende personnalisée pour le pie chart */
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  background: white;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 8px 14px;
+  font-size: 0.875rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.legend-label {
+  font-weight: 600;
+  margin-right: 6px;
+  color: #262626;
+}
+
+.legend-percent {
+  color: #737373;
+  font-weight: 400;
+}
+
+/* Icônes Material Dashboard */
+.material-icons {
+  font-size: 24px;
+}
+
+/* Select harmonisé */
+.form-select-sm {
+  border-color: #d4d4d4;
+  font-size: 0.875rem;
+  min-width: 200px;
+}
+
+.form-select-sm:focus {
+  border-color: #43A047;
+  box-shadow: 0 0 0 0.2rem rgba(67, 160, 71, 0.15);
+}
+
+/* Badges dans les notes */
+.badge {
+  font-weight: 600;
+  padding: 4px 10px;
+}
