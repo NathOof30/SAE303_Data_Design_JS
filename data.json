@@ -35676,7 +35676,7 @@
                 "name": "Choco",
                 "fullname": "maincsp\/Superpermutation-table-4_c22",
                 "family": "Superpermutation",
-                "competition_id": "2",
+                "competition_id": "2", 
                 "status": "SAT",
                 "nb_variables": "63",
                 "nb_clauses": "48",

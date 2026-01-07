@@ -1,0 +1,20 @@
+{
+                "id": "10049",
+                "name": "Choco", //nom programme
+                "fullname": "maincsp\/Superpermutation-table-4_c22", //nom problème
+                "family": "Superpermutation", //problème fait parti de ...
+                "competition_id": "2", 
+                "status": "SAT", //résultat  : SAT, UNSAT, UNKNOWN
+                "nb_variables": "63", //taille du problème : nb d'inconnu à fixer pour la solution
+                "nb_clauses": "48",
+                "info_domains": "#types:2 #values:882 (#4:33 #25:30)",
+                "info_constraints": "#extension:30 #intension:16 #cardinality:1 #instantiation:1 ", //nom des contraintes du pb
+                "useless_vars": "0",
+                "created_at": "2022-07-11 12:07:06",
+                "updated_at": "2022-07-11 12:07:06",
+                "solver_id": "6",
+                "benchmark_id": "199",
+                "time": "2.00"
+            },
+
+//programme qu'on a lancé pour trouvcer des solutions
