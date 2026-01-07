@@ -20,11 +20,14 @@ export async function loadBenchmarks(path = './assets/data/data.json') {
 
 function normalizeRecord(rec) {
     const lower = Object.fromEntries(Object.entries(rec).map(([k, v]) => [k.toLowerCase(), v]));
+    const statusOriginal = (lower.status || 'UNKNOWN').toUpperCase();
+    
     return {
         benchmark: lower.family || 'unknown',
         solver: lower.name || 'unknown',
         time: Number(lower.time ?? 0),
-        status: tradStatus(lower.status || 'UNKNOWN'),
+        status: statusOriginal,
+        statusTrad: tradStatus(statusOriginal),
         variables: Number(lower.nb_variables ?? 0),
         clauses: Number(lower.nb_clauses ?? 0),
     };

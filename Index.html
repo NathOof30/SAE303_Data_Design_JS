@@ -74,7 +74,7 @@
               <div class="text-end pt-1">
                 <p class="text-sm mb-0 text-capitalize">Taux d'échec</p>
                 <h4 class="mb-0" id="stat-failure-rate">-</h4>
-                <p class="text-xs text-warning mb-0">UNKNOWN uniquement</p>
+                <p class="text-xs text-warning mb-0">Inconnu uniquement</p>
               </div>
             </div>
           </div>
@@ -113,7 +113,7 @@
           <div class="card h-100">
             <div class="card-header pb-0">
               <h6 class="mb-0">Répartition des résultats</h6>
-              <p class="text-sm text-secondary mb-0">SAT / UNSAT / UNKNOWN</p>
+              <p class="text-sm text-secondary mb-0">Satisfaisant / Insatisfaisant / Inconnu</p>
             </div>
             <div class="card-body chart-container">
               <canvas id="chart-success-rate"></canvas>
@@ -132,7 +132,7 @@
               <ul class="mb-0 text-sm">
                 <li><strong>Temps par solveur</strong> : Compare la rapidité moyenne. Un temps élevé (≥1000s) signale un timeout.</li>
                 <li><strong>Évolution vs taille</strong> : Courbe montante = performance dégrade avec la complexité.</li>
-                <li><strong>Statuts</strong> : <span class="badge bg-success">SAT</span> = solution trouvée, <span class="badge bg-danger">UNSAT</span> = impossible, <span class="badge bg-warning">UNKNOWN</span> = timeout/échec.</li>
+                <li><strong>Statuts</strong> : <span class="badge bg-success">Satisfaisant</span> = solution trouvée, <span class="badge bg-danger">Insatisfaisant</span> = impossible, <span class="badge bg-warning">Inconnu</span> = timeout/échec.</li>
                 <li><strong>Filtrage</strong> : Sélectionnez un benchmark pour comparer les solveurs sur un problème précis.</li>
               </ul>
             </div>
