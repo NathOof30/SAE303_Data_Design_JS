@@ -42,7 +42,7 @@ export function renderSizeTrend(ctx, data) {
 export function renderSuccessRate(ctx, data) {
   if (data.length === 0) return;
   const counts = countBy(data, d => d.status);
-  const labels = ['SAT', 'UNSAT', 'UNKNOWN'];
+  const labels = ['Satisfaisant', 'Insatisfaisant', 'Inconnu'];
   const values = labels.map(l => counts[l] || 0);
   return createOrUpdate('successRate', ctx, {
     type: 'pie',
