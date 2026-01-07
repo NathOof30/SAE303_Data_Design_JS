@@ -1,3 +1,8 @@
+## Infos
+
+⚠️ Il est nécessaire de lancer un server afin de visualiser les données ⚠️
+-> exemple :  ```python -m http.server 8000```
+
 ## Composition d'équipe
 
 Mathéo Mollet, Nathanaël Leang, Nolwenn Louis
